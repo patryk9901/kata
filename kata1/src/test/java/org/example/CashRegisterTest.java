@@ -10,7 +10,7 @@ class CashRegisterTest {
     public void shouldAddSingleProduct() {
         //given
         CashRegister register = new CashRegister();
-        Product beans = new Product(1, "Beans", 0.65);
+        Product beans = new Product( "Beans", 0.65);
 
         //when
         Receipt result = register.addProduct(beans);
@@ -30,10 +30,10 @@ class CashRegisterTest {
         //given
         CashRegister register = new CashRegister();
 
-        Product beans = new Product(1, "Beans", 0.65);
-        Product bottleOfWater = new Product(2, "BottleOfWater", 0.35);
-        Product beans2 = new Product(1, "Beans", 0.65);
-        Product bottleOfWater2 = new Product(2, "BottleOfWater", 0.35);
+        Product beans = new Product( "Beans", 0.65);
+        Product bottleOfWater = new Product( "BottleOfWater", 0.35);
+        Product beans2 = new Product("Beans", 0.65);
+        Product bottleOfWater2 = new Product( "BottleOfWater", 0.35);
         //when
         Receipt result = register.addProduct(beans);
         Receipt result2 = register.addProduct(bottleOfWater);
@@ -42,7 +42,6 @@ class CashRegisterTest {
 
         //then
         assertEquals(2, result4.total);
-
         assertEquals(2, result4.LineItems.size());
 
         assertEquals(2, result4.LineItems.get(0).productAmount);

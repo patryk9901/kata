@@ -1,43 +1,28 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CashRegister {
 
-    List<Double> products = new ArrayList<>();
-    //ReceiptLineItem receiptLineItem = new ReceiptLineItem("Beans",0.65,1);
-    List<ReceiptLineItem> receiptLineItems = new ArrayList<>();
+    HashMap<String,ReceiptLineItem> receiptLineItemHashMap = new HashMap<>();
 
     public Receipt addProduct(Product product) {
-        double totalOfOneProduct = 0;
-        int productAmount = 0;
+        if(receiptLineItemHashMap.containsKey(product.productName)) {
+            ReceiptLineItem receiptLineItem = receiptLineItemHashMap.get(product.productName);
+            receiptLineItem.productTotal += product.productPrice;
+            receiptLineItem.productAmount++;
+        }
+        else {
+            receiptLineItemHashMap.put(product.productName, new ReceiptLineItem(product.productName, product.productPrice,1));
+        }
+
+        Collection<ReceiptLineItem> values = receiptLineItemHashMap.values();
+        Iterator<ReceiptLineItem> iterator = values.iterator();
         double total = 0;
-        boolean productExists = false;
-
-        products.add(product.productPrice);
-
-        for (ReceiptLineItem item : receiptLineItems) {
-            if (item.productId == product.productId) {
-
-                item.productTotal += product.productPrice;
-                item.productAmount++;
-                productExists = true;
-                break;
-            }
+        while(iterator.hasNext()){
+            ReceiptLineItem next = iterator.next();
+            total += next.productTotal;
         }
-        if (!productExists) {
-
-            totalOfOneProduct += product.productPrice;
-            productAmount = 1;
-            ReceiptLineItem receiptLineItem = new ReceiptLineItem(product.productName, totalOfOneProduct, productAmount, product.productId);
-            receiptLineItems.add(receiptLineItem);
-        }
-
-        for (int i = 0; i < products.size(); i++) {
-            total += products.get(i);
-        }
-        return new Receipt(receiptLineItems, total);
+        return new Receipt(List.copyOf(values), total);
     }
-
 }
