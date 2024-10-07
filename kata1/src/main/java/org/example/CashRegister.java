@@ -5,15 +5,27 @@ import java.util.*;
 public class CashRegister {
 
     HashMap<String,ReceiptLineItem> receiptLineItemHashMap = new HashMap<>();
+    public Receipt addProduct(Product product , double weight) {
 
-    public Receipt addProduct(Product product) {
-        if(receiptLineItemHashMap.containsKey(product.productName)) {
-            ReceiptLineItem receiptLineItem = receiptLineItemHashMap.get(product.productName);
-            receiptLineItem.productTotal += product.productPrice;
-            receiptLineItem.productAmount++;
-        }
-        else {
-            receiptLineItemHashMap.put(product.productName, new ReceiptLineItem(product.productName, product.productPrice,1));
+        String productName = product.getProductName();
+        double productPrice = product.getProductPrice();
+        String productType = product.getProductType();
+
+        if(productType == "packagedProduct") {
+            if (receiptLineItemHashMap.containsKey(productName)) {
+                ReceiptLineItem receiptLineItem = receiptLineItemHashMap.get(productName);
+                receiptLineItem.productTotal += productPrice;
+                receiptLineItem.productAmount++;
+            } else {
+                receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, productPrice, 1));
+            }
+        }else if(productType == "looseProduct"){
+            if (receiptLineItemHashMap.containsKey(productName)) {
+                ReceiptLineItem receiptLineItem = receiptLineItemHashMap.get(productName);
+                receiptLineItem.productTotal += productPrice*weight;
+            } else {
+                receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, productPrice*weight, 1));
+            }
         }
 
         Collection<ReceiptLineItem> values = receiptLineItemHashMap.values();

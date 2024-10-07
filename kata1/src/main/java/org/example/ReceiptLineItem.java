@@ -10,6 +10,4 @@ public class ReceiptLineItem {
         this.productTotal = productTotal;
         this.productAmount = productAmount;
     }
-
-
 }
