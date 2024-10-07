@@ -15,14 +15,12 @@ public class PackagedProduct implements Product {
     }
 
     @Override
-    public String getProductType() {
-        return "packagedProduct";
-    }
-
-    @Override
-    public Double getProductPrice() {
+    public Double calculatePrice() {
         return productPrice;
     }
 
-
+    @Override
+    public Double getProductAmount() {
+        return 1.0;
+    }
 }
