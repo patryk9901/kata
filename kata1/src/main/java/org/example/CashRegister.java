@@ -1,5 +1,6 @@
 package org.example;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class CashRegister {
@@ -9,22 +10,22 @@ public class CashRegister {
     public Receipt addProduct(Product product) {
 
         String productName = product.getProductName();
+        Money productPrice = product.calculatePrice();
 
         if (receiptLineItemHashMap.containsKey(productName)) {
             ReceiptLineItem receiptLineItem = receiptLineItemHashMap.get(productName);
-            receiptLineItem.productTotal += product.calculatePrice();
+            receiptLineItem.productTotal = receiptLineItem.productTotal.add(productPrice);
             receiptLineItem.productAmount += product.getProductAmount();
         } else {
-            receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, product.calculatePrice(), product.getProductAmount()));
+            receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, productPrice.getAmount(), product.getProductAmount()));
         }
 
-        Collection<ReceiptLineItem> values = receiptLineItemHashMap.values();
-        Iterator<ReceiptLineItem> iterator = values.iterator();
-        double total = 0;
-        while (iterator.hasNext()) {
-            ReceiptLineItem next = iterator.next();
-            total += next.productTotal;
+        Money totalMoney = new Money(BigDecimal.ZERO);
+
+        for (ReceiptLineItem next : receiptLineItemHashMap.values()) {
+            totalMoney = totalMoney.add(next.productTotal);
         }
-        return new Receipt(List.copyOf(values), total);
+
+        return new Receipt(List.copyOf(receiptLineItemHashMap.values()), totalMoney);
     }
 }
