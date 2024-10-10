@@ -7,9 +7,9 @@ public class ReceiptLineItem {
     public Money productTotal;
     public double productAmount;
 
-    public ReceiptLineItem(String productName, BigDecimal productTotalAmount, double productAmount) {
+    public ReceiptLineItem(String productName, Money productTotalAmount, double productAmount) {
         this.productName = productName;
-        this.productTotal =  new Money(productTotalAmount);
+        this.productTotal =  productTotalAmount;
         this.productAmount = productAmount;
     }
 }
