@@ -1,6 +1,6 @@
-package org.example;
+package org.example.Receipt;
 
-import java.math.BigDecimal;
+import org.example.Money;
 
 public class ReceiptLineItem {
     public String productName;

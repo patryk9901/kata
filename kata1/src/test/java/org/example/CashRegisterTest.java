@@ -1,5 +1,11 @@
 package org.example;
 
+import org.example.Product.LooseProduct;
+import org.example.Product.PackagedProduct;
+import org.example.Promotion.EightPlusEight;
+import org.example.Promotion.Promotion;
+import org.example.Promotion.TwoForOne;
+import org.example.Receipt.Receipt;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -108,8 +114,8 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleDiscountTwoForOneProducts() {
         //given
-        HashMap<String,Promotion> promotionMap = new HashMap<>();
-        promotionMap.put("Beans", new Promotion());
+        HashMap<String, Promotion> promotionMap = new HashMap<>();
+        promotionMap.put("Beans", new TwoForOne());
         CashRegister register = new CashRegister(promotionMap);
 
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
@@ -135,46 +141,14 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleDiscountEightPlusEightProducts() {
         //given
-        HashMap<String,Promotion> promotionMap = new HashMap<>();
-        promotionMap.put("Beans", new Promotion());
+        HashMap<String, Promotion> promotionMap = new HashMap<>();
+        promotionMap.put("Beans", new EightPlusEight());
         CashRegister register = new CashRegister(promotionMap);
 
-        PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans2 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans3 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans4 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans5 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans6 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans7 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans8 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans9 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans10 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans11 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans12 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans13 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans14 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans15 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-        PackagedProduct beans16 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
-
-
-        //when
-        register.addProduct(beans);
-        register.addProduct(beans2);
-        register.addProduct(beans3);
-        register.addProduct(beans4);
-        register.addProduct(beans5);
-        register.addProduct(beans6);
-        register.addProduct(beans7);
-        register.addProduct(beans8);
-        register.addProduct(beans9);
-        register.addProduct(beans10);
-        register.addProduct(beans11);
-        register.addProduct(beans12);
-        register.addProduct(beans13);
-        register.addProduct(beans14);
-        register.addProduct(beans15);
-        register.addProduct(beans16);
-
+        for (int i = 0; i < 16; i++) {
+            PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
+            register.addProduct(beans);
+        }
 
         Receipt result = register.finishTransaction();
         //then
@@ -189,7 +163,4 @@ class CashRegisterTest {
         assertEquals(new Money(BigDecimal.valueOf(-5.20)), result.LineItems.get(1).productTotal);
         assertEquals(1, result.LineItems.get(1).productAmount);
     }
-
-
-
 }

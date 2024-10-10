@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Product;
+
+import org.example.Money;
 
 import java.math.BigDecimal;
 

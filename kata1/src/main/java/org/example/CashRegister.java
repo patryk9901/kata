@@ -1,15 +1,21 @@
 package org.example;
 
+import org.example.Product.Product;
+import org.example.Promotion.Promotion;
+import org.example.Promotion.PromotionProvider;
+import org.example.Receipt.Receipt;
+import org.example.Receipt.ReceiptLineItem;
+
 import java.math.BigDecimal;
 import java.util.*;
 
 public class CashRegister {
 
-    HashMap<String, ReceiptLineItem> receiptLineItemHashMap;
+    LinkedHashMap<String, ReceiptLineItem> receiptLineItemHashMap;
     PromotionProvider promotionProvider;
 
-    public  CashRegister (Map<String, Promotion> productNameToPromotion){
-        this.receiptLineItemHashMap = new HashMap<>();
+    public CashRegister(Map<String, Promotion> productNameToPromotion) {
+        this.receiptLineItemHashMap = new LinkedHashMap<>();
         this.promotionProvider = new PromotionProvider(productNameToPromotion);
     }
 
@@ -31,7 +37,7 @@ public class CashRegister {
     public Receipt finishTransaction() {
         for (ReceiptLineItem item : receiptLineItemHashMap.values()) {
             Promotion promotion = promotionProvider.getPromotion(item.productName);
-            if(promotion != null){
+            if (promotion != null) {
                 ReceiptLineItem updatedItem = promotion.applyPromotion(item);
                 receiptLineItemHashMap.put(updatedItem.productName, updatedItem);
             }
@@ -39,7 +45,7 @@ public class CashRegister {
         return prepareReceipt(receiptLineItemHashMap);
     }
 
-    private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap){
+    private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap) {
         Money total = new Money(BigDecimal.ZERO);
 
         for (ReceiptLineItem next : receiptLineItemMap.values()) {
