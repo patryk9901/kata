@@ -38,8 +38,8 @@ public class CashRegister {
         for (ReceiptLineItem item : receiptLineItemHashMap.values()) {
             Promotion promotion = promotionProvider.getPromotion(item.productName);
             if (promotion != null) {
-                ReceiptLineItem updatedItem = promotion.applyPromotion(item);
-                receiptLineItemHashMap.put(updatedItem.productName, updatedItem);
+                ReceiptLineItem promotionLineItem = promotion.applyPromotion(item);
+                receiptLineItemHashMap.put(promotionLineItem.productName, promotionLineItem);
             }
         }
         return prepareReceipt(receiptLineItemHashMap);
