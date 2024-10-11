@@ -1,8 +1,7 @@
-package org.example.Product;
-
-import org.example.Money;
+package org.example;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 public class PackagedProduct implements Product {
     public String productName;
@@ -10,7 +9,7 @@ public class PackagedProduct implements Product {
 
     public PackagedProduct(String productName, BigDecimal priceAmount) {
         this.productName = productName;
-        this.productPrice = new Money(priceAmount);
+        this.productPrice = new Money(priceAmount, Currency.getInstance("PLN"));
     }
 
     @Override
