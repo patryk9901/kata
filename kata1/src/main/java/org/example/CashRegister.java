@@ -8,10 +8,12 @@ public class CashRegister {
     LinkedHashMap<String, ReceiptLineItem> receiptLineItemHashMap;
     PromotionProvider promotionProvider;
     private Currency defaultCurrency = Currency.getInstance("PLN");
+    private ClientNBP clientNBP;
 
     public CashRegister(Map<String, Promotion> productNameToPromotion) {
         this.receiptLineItemHashMap = new LinkedHashMap<>();
         this.promotionProvider = new PromotionProvider(productNameToPromotion);
+        this.clientNBP = new ClientNBP();
     }
 
     public Receipt addProduct(Product product) {
@@ -26,10 +28,10 @@ public class CashRegister {
         } else {
             receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, productPrice, product.getProductAmount()));
         }
-        return prepareReceipt(receiptLineItemHashMap);
+        return prepareReceipt(receiptLineItemHashMap,defaultCurrency);
     }
 
-    public Receipt finishTransaction() {
+    public Receipt finishTransaction(Currency currency) {
         for (ReceiptLineItem item : receiptLineItemHashMap.values()) {
             Promotion promotion = promotionProvider.getPromotion(item.productName);
             if (promotion != null) {
@@ -40,16 +42,21 @@ public class CashRegister {
                                 promotionLineItem.productAmount));
             }
         }
-        return prepareReceipt(receiptLineItemHashMap);
+        return prepareReceipt(receiptLineItemHashMap,currency);
     }
 
-    private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap) {
+    private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap, Currency currency) {
         Money total = new Money(BigDecimal.ZERO, defaultCurrency);
 
         for (ReceiptLineItem next : receiptLineItemMap.values()) {
             total = total.add(next.productTotal);
         }
 
-        return new Receipt(List.copyOf(receiptLineItemHashMap.values()), total);
+        if (!currency.equals(defaultCurrency)) {
+            BigDecimal convertedTotalAmount = clientNBP.convertFromPLN(total.getAmount(), currency);
+            total = new Money(convertedTotalAmount, currency);
+        }
+
+        return new Receipt(List.copyOf(receiptLineItemMap.values()), total);
     }
-}
+    }

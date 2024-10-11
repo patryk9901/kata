@@ -20,7 +20,7 @@ class CashRegisterTest {
 
         //when
         register.addProduct(beans);
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
 
         //then
         assertEquals(new Money(BigDecimal.valueOf(0.65), currency), result.total);
@@ -44,7 +44,7 @@ class CashRegisterTest {
         register.addProduct(bottleOfWater);
         register.addProduct(beans2);
         register.addProduct(bottleOfWater2);
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
 
         //then
         assertEquals(new Money(BigDecimal.valueOf(2), currency), result.total);
@@ -66,7 +66,7 @@ class CashRegisterTest {
         LooseProduct sausage = new LooseProduct("Slaska", BigDecimal.valueOf(15.50), 0.833);
         //when
         register.addProduct(sausage);
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
 
         //then
         assertEquals(new Money(BigDecimal.valueOf(12.91), currency), result.total);
@@ -92,7 +92,7 @@ class CashRegisterTest {
         register.addProduct(ham);
         register.addProduct(ham2);
         register.addProduct(sausage2);
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
 
         //then
         assertEquals(new Money(BigDecimal.valueOf(12), currency), result.total);
@@ -120,7 +120,7 @@ class CashRegisterTest {
         //when
         register.addProduct(beans);
         register.addProduct(beans2);
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
         //then
         assertEquals(new Money(BigDecimal.valueOf(0.65), currency), result.total);
         assertEquals(2, result.LineItems.size());
@@ -146,7 +146,7 @@ class CashRegisterTest {
             register.addProduct(beans);
         }
 
-        Receipt result = register.finishTransaction();
+        Receipt result = register.finishTransaction(currency);
         //then
         assertEquals(new Money(BigDecimal.valueOf(5.20), currency), result.total);
         assertEquals(2, result.LineItems.size());
@@ -159,4 +159,25 @@ class CashRegisterTest {
         assertEquals(new Money(BigDecimal.valueOf(-5.20), currency), result.LineItems.get(1).productTotal);
         assertEquals(1, result.LineItems.get(1).productAmount);
     }
+    @Test
+    public void shouldAddSingleProductPaymentWithEuro() {
+        //given
+        CashRegister register = new CashRegister(Map.of());
+        PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
+        Currency inWhichCurrencyClientPay = Currency.getInstance("EUR");
+
+        //when
+        register.addProduct(beans);
+        Receipt result = register.finishTransaction(inWhichCurrencyClientPay);
+
+        //then
+        assertEquals(new Money(BigDecimal.valueOf(0.16), inWhichCurrencyClientPay), result.total);
+        assertEquals(1, result.LineItems.size());
+        assertEquals(1, result.LineItems.get(0).productAmount);
+        assertEquals(new Money(BigDecimal.valueOf(0.65), currency), result.LineItems.get(0).productTotal);
+        assertEquals("Beans", result.LineItems.get(0).productName);
+    }
+
+
+
 }
