@@ -1,4 +1,4 @@
-package org.example.Promotion;
+package org.example;
 
 import java.util.Map;
 

@@ -1,11 +1,5 @@
 package org.example;
 
-import org.example.Product.Product;
-import org.example.Promotion.Promotion;
-import org.example.Promotion.PromotionProvider;
-import org.example.Receipt.Receipt;
-import org.example.Receipt.ReceiptLineItem;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -13,6 +7,7 @@ public class CashRegister {
 
     LinkedHashMap<String, ReceiptLineItem> receiptLineItemHashMap;
     PromotionProvider promotionProvider;
+    private Currency defaultCurrency = Currency.getInstance("PLN");
 
     public CashRegister(Map<String, Promotion> productNameToPromotion) {
         this.receiptLineItemHashMap = new LinkedHashMap<>();
@@ -39,14 +34,17 @@ public class CashRegister {
             Promotion promotion = promotionProvider.getPromotion(item.productName);
             if (promotion != null) {
                 ReceiptLineItem promotionLineItem = promotion.applyPromotion(item);
-                receiptLineItemHashMap.put(promotionLineItem.productName, promotionLineItem);
+                receiptLineItemHashMap.put(promotionLineItem.productName,
+                        new ReceiptLineItem(promotionLineItem.productName,
+                                new Money(promotionLineItem.productTotal.getAmount(), defaultCurrency),
+                                promotionLineItem.productAmount));
             }
         }
         return prepareReceipt(receiptLineItemHashMap);
     }
 
     private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap) {
-        Money total = new Money(BigDecimal.ZERO);
+        Money total = new Money(BigDecimal.ZERO, defaultCurrency);
 
         for (ReceiptLineItem next : receiptLineItemMap.values()) {
             total = total.add(next.productTotal);

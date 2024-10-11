@@ -1,6 +1,4 @@
-package org.example.Product;
-
-import org.example.Money;
+package org.example;
 
 public interface Product {
     String getProductName();

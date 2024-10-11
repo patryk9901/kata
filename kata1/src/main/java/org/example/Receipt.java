@@ -1,6 +1,4 @@
-package org.example.Receipt;
-
-import org.example.Money;
+package org.example;
 
 import java.util.List;
 
