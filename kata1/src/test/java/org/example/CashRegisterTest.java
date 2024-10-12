@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CashRegisterTest {
 
     Currency currency = Currency.getInstance("PLN");
+
     @Test
     public void shouldAddSingleProduct() {
         //given
@@ -159,8 +160,9 @@ class CashRegisterTest {
         assertEquals(new Money(BigDecimal.valueOf(-5.20), currency), result.LineItems.get(1).productTotal);
         assertEquals(1, result.LineItems.get(1).productAmount);
     }
+
     @Test
-    public void shouldAddSingleProductPaymentWithEuro() {
+    public void shouldAddSingleProductPayWithEuro() {
         //given
         CashRegister register = new CashRegister(Map.of());
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
@@ -171,13 +173,12 @@ class CashRegisterTest {
         Receipt result = register.finishTransaction(inWhichCurrencyClientPay);
 
         //then
-        assertEquals(new Money(BigDecimal.valueOf(0.16), inWhichCurrencyClientPay), result.total);
+        assertEquals(new Money(BigDecimal.valueOf(0.15), inWhichCurrencyClientPay), result.total);
         assertEquals(1, result.LineItems.size());
         assertEquals(1, result.LineItems.get(0).productAmount);
         assertEquals(new Money(BigDecimal.valueOf(0.65), currency), result.LineItems.get(0).productTotal);
         assertEquals("Beans", result.LineItems.get(0).productName);
     }
-
 
 
 }
