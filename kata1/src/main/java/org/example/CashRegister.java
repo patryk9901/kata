@@ -28,7 +28,7 @@ public class CashRegister {
         } else {
             receiptLineItemHashMap.put(productName, new ReceiptLineItem(productName, productPrice, product.getProductAmount()));
         }
-        return prepareReceipt(receiptLineItemHashMap,defaultCurrency);
+        return prepareReceipt(receiptLineItemHashMap, defaultCurrency);
     }
 
     public Receipt finishTransaction(Currency currency) {
@@ -42,7 +42,7 @@ public class CashRegister {
                                 promotionLineItem.productAmount));
             }
         }
-        return prepareReceipt(receiptLineItemHashMap,currency);
+        return prepareReceipt(receiptLineItemHashMap, currency);
     }
 
     private Receipt prepareReceipt(Map<String, ReceiptLineItem> receiptLineItemMap, Currency currency) {
@@ -59,4 +59,4 @@ public class CashRegister {
 
         return new Receipt(List.copyOf(receiptLineItemMap.values()), total);
     }
-    }
+}
