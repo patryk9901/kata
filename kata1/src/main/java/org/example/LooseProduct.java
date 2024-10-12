@@ -1,8 +1,7 @@
-package org.example.Product;
-
-import org.example.Money;
+package org.example;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 public class LooseProduct implements Product {
     public String productName;
@@ -11,7 +10,7 @@ public class LooseProduct implements Product {
 
     public LooseProduct(String productName, BigDecimal priceAmount, double weight) {
         this.productName = productName;
-        this.pricePerKg = new Money(priceAmount);
+        this.pricePerKg = new Money(priceAmount, Currency.getInstance("PLN"));
         this.weight = weight;
     }
 

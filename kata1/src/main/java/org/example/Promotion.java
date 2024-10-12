@@ -1,6 +1,4 @@
-package org.example.Promotion;
-
-import org.example.Receipt.ReceiptLineItem;
+package org.example;
 
 public interface Promotion {
 
