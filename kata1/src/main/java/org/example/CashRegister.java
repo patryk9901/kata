@@ -33,7 +33,7 @@ public class CashRegister {
 
     public Receipt finishTransaction(Currency currency) {
         for (ReceiptLineItem item : receiptLineItemHashMap.values()) {
-            Promotion promotion = promotionProvider.getPromotion(item.productName);
+            Promotion promotion = promotionProvider.getPromotion(item.productName);//TODO ITEM
             if (promotion != null) {
                 ReceiptLineItem promotionLineItem = promotion.applyPromotion(item);
                 receiptLineItemHashMap.put(promotionLineItem.productName,

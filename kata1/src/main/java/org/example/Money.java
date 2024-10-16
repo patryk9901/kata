@@ -42,6 +42,11 @@ public class Money {
         return new Money(amount.negate().divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP), this.currency);
     }
 
+    public Money applyPercentageDiscount(BigDecimal discountPercent){
+        BigDecimal discountAmount = amount.multiply(discountPercent);
+        return new Money (discountAmount.negate(),this.currency);
+    }
+
     public Money multiply(double factor) {
         return new Money(this.amount.multiply(BigDecimal.valueOf(factor)), this.currency);
     }

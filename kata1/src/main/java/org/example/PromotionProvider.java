@@ -13,3 +13,4 @@ public class PromotionProvider {
         return productNameToPromotion.get(productName);
     }
 }
+//TODO LOGIC OF CHOOSING PROMOTION

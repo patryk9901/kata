@@ -1,5 +1,7 @@
 package org.example;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -52,6 +54,7 @@ public class ClientNBP {
     }
 
     private BigDecimal parseExchangeRate(String responseBody) {
+        var g = new Gson();
         String marker = "\"mid\":";
         int startIndex = responseBody.indexOf(marker) + marker.length();
         int endIndex = responseBody.indexOf('}', startIndex);
