@@ -180,5 +180,30 @@ class CashRegisterTest {
         assertEquals("Beans", result.LineItems.get(0).productName);
     }
 
+    @Test
+    public void shouldAddMultipleDiscountFifteenPercentOffProducts() {
+        //given
+        HashMap<String, Promotion> promotionMap = new HashMap<>();
+        promotionMap.put("Beans", new FifteenPercentOff());
+        CashRegister register = new CashRegister(promotionMap);
 
+        PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
+        PackagedProduct beans2 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
+
+        //when
+        register.addProduct(beans);
+        register.addProduct(beans2);
+        Receipt result = register.finishTransaction(currency);
+        //then
+        assertEquals(new Money(BigDecimal.valueOf(1.10), currency), result.total);
+        assertEquals(2, result.LineItems.size());
+
+        assertEquals(2, result.LineItems.get(0).productAmount);
+        assertEquals(new Money(BigDecimal.valueOf(1.30), currency), result.LineItems.get(0).productTotal);
+        assertEquals("Beans", result.LineItems.get(0).productName);
+
+        assertEquals("Fifteen percent off: Beans", result.LineItems.get(1).productName);
+        assertEquals(new Money(BigDecimal.valueOf(-0.20), currency), result.LineItems.get(1).productTotal);
+        assertEquals(1, result.LineItems.get(1).productAmount);
+    }
 }
