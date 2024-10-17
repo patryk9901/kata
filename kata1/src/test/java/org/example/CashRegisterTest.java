@@ -3,9 +3,7 @@ package org.example;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +14,7 @@ class CashRegisterTest {
     @Test
     public void shouldAddSingleProduct() {
         //given
-        CashRegister register = new CashRegister(Map.of());
+        CashRegister register = new CashRegister(List.of(),new FakeNbpClient());
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
 
         //when
@@ -34,7 +32,7 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleProducts() {
         //given
-        CashRegister register = new CashRegister(Map.of());
+        CashRegister register = new CashRegister(List.of(), new FakeNbpClient());
 
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
         PackagedProduct bottleOfWater = new PackagedProduct("BottleOfWater", BigDecimal.valueOf(0.35));
@@ -63,7 +61,7 @@ class CashRegisterTest {
     @Test
     public void shouldAddLooseProduct() {
         //given
-        CashRegister register = new CashRegister(Map.of());
+        CashRegister register = new CashRegister(List.of(), new FakeNbpClient());
         LooseProduct sausage = new LooseProduct("Slaska", BigDecimal.valueOf(15.50), 0.833);
         //when
         register.addProduct(sausage);
@@ -81,7 +79,7 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleLooseProduct() {
         //given
-        CashRegister register = new CashRegister(Map.of());
+        CashRegister register = new CashRegister(List.of(), new FakeNbpClient());
 
         LooseProduct sausage = new LooseProduct("Slaska", BigDecimal.valueOf(2), 2);
         LooseProduct ham = new LooseProduct("Krakowska", BigDecimal.valueOf(1), 2);
@@ -111,9 +109,10 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleDiscountTwoForOneProducts() {
         //given
-        HashMap<String, Promotion> promotionMap = new HashMap<>();
-        promotionMap.put("Beans", new TwoForOne());
-        CashRegister register = new CashRegister(promotionMap);
+        List<Promotion> promotionList = new ArrayList<>();
+        promotionList.add(new TwoForOne());
+
+        CashRegister register = new CashRegister(promotionList, new FakeNbpClient());
 
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
         PackagedProduct beans2 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
@@ -138,9 +137,10 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleDiscountEightPlusEightProducts() {
         //given
-        HashMap<String, Promotion> promotionMap = new HashMap<>();
-        promotionMap.put("Beans", new EightPlusEight());
-        CashRegister register = new CashRegister(promotionMap);
+        List<Promotion> promotionList = new ArrayList<>();
+        promotionList.add(new EightPlusEight());
+
+        CashRegister register = new CashRegister(promotionList, new FakeNbpClient());
 
         for (int i = 0; i < 16; i++) {
             PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
@@ -164,7 +164,7 @@ class CashRegisterTest {
     @Test
     public void shouldAddSingleProductPayWithEuro() {
         //given
-        CashRegister register = new CashRegister(Map.of());
+        CashRegister register = new CashRegister(List.of(), new FakeNbpClient());
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
         Currency inWhichCurrencyClientPay = Currency.getInstance("EUR");
 
@@ -183,9 +183,10 @@ class CashRegisterTest {
     @Test
     public void shouldAddMultipleDiscountFifteenPercentOffProducts() {
         //given
-        HashMap<String, Promotion> promotionMap = new HashMap<>();
-        promotionMap.put("Beans", new FifteenPercentOff());
-        CashRegister register = new CashRegister(promotionMap);
+        List<Promotion> promotionList = new ArrayList<>();
+        promotionList.add(new FifteenPercentOff());
+
+        CashRegister register = new CashRegister(promotionList, new FakeNbpClient());
 
         PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
         PackagedProduct beans2 = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
@@ -204,6 +205,35 @@ class CashRegisterTest {
 
         assertEquals("Fifteen percent off: Beans", result.LineItems.get(1).productName);
         assertEquals(new Money(BigDecimal.valueOf(-0.20), currency), result.LineItems.get(1).productTotal);
+        assertEquals(1, result.LineItems.get(1).productAmount);
+    }
+        @Test
+    public void shouldAddProductWithMultiplePromotions() {
+        //given
+        List<Promotion> promotionList = new ArrayList<>();
+
+        promotionList.add(new EightPlusEight());
+        promotionList.add(new TwoForOne());
+        promotionList.add(new FifteenPercentOff());
+
+        CashRegister register = new CashRegister(promotionList, new FakeNbpClient());
+
+        for (int i = 0; i < 16; i++) {
+            PackagedProduct beans = new PackagedProduct("Beans", BigDecimal.valueOf(0.65));
+            register.addProduct(beans);
+        }
+
+        Receipt result = register.finishTransaction(currency);
+        //then
+        assertEquals(new Money(BigDecimal.valueOf(5.20), currency), result.total);
+        assertEquals(2, result.LineItems.size());
+
+        assertEquals(16, result.LineItems.get(0).productAmount);
+        assertEquals(new Money(BigDecimal.valueOf(10.40), currency), result.LineItems.get(0).productTotal);
+        assertEquals("Beans", result.LineItems.get(0).productName);
+
+        assertEquals("Eight plus eight: Beans", result.LineItems.get(1).productName);
+        assertEquals(new Money(BigDecimal.valueOf(-5.20), currency), result.LineItems.get(1).productTotal);
         assertEquals(1, result.LineItems.get(1).productAmount);
     }
 }
