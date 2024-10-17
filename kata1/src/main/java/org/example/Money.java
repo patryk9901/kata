@@ -47,6 +47,10 @@ public class Money {
         return new Money (discountAmount.negate(),this.currency);
     }
 
+    public int compareTo(Money other){
+        return this.amount.compareTo(other.amount);
+    }
+
     public Money multiply(double factor) {
         return new Money(this.amount.multiply(BigDecimal.valueOf(factor)), this.currency);
     }

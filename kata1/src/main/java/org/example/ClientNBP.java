@@ -16,12 +16,11 @@ import java.util.Map;
 public class ClientNBP {
 
     private final Map<String, BigDecimal> exchangeRates;
-    private final HttpClient client;
+    private final NbpHttpClient client;
 
-    public ClientNBP() {
+    public ClientNBP(NbpHttpClient nbpHttpClient) {
         this.exchangeRates = new HashMap<>();
-        this.client = HttpClient.newHttpClient();
-
+        this.client = nbpHttpClient;
         initializeExchangeRates();
     }
 
@@ -40,28 +39,10 @@ public class ClientNBP {
     }
 
     public BigDecimal getExchangeRateFromNBP(Currency currency) {
-        String url = String.format("https://api.nbp.pl/api/exchangerates/rates/A/%s/", currency.getCurrencyCode());
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return parseExchangeRate(response.body());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return client.getExchangeRateFromNBP(currency);
     }
 
-    private BigDecimal parseExchangeRate(String responseBody) {
-        var g = new Gson();
-        String marker = "\"mid\":";
-        int startIndex = responseBody.indexOf(marker) + marker.length();
-        int endIndex = responseBody.indexOf('}', startIndex);
-        String rateString = responseBody.substring(startIndex, endIndex).trim();
-
-        return new BigDecimal(rateString);
-    }
 
     public BigDecimal getExchangeRate(Currency currency) {
         String currencyCode = currency.getCurrencyCode();

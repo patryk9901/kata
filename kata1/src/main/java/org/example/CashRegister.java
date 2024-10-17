@@ -10,10 +10,10 @@ public class CashRegister {
     private Currency defaultCurrency = Currency.getInstance("PLN");
     private ClientNBP clientNBP;
 
-    public CashRegister(Map<String, Promotion> productNameToPromotion) {
+    public CashRegister(List<Promotion> activePromotions,NbpHttpClient nbpHttpClient) {
         this.receiptLineItemHashMap = new LinkedHashMap<>();
-        this.promotionProvider = new PromotionProvider(productNameToPromotion);
-        this.clientNBP = new ClientNBP();
+        this.promotionProvider = new PromotionProvider(activePromotions);
+        this.clientNBP = new ClientNBP(nbpHttpClient);
     }
 
     public Receipt addProduct(Product product) {
@@ -33,7 +33,7 @@ public class CashRegister {
 
     public Receipt finishTransaction(Currency currency) {
         for (ReceiptLineItem item : receiptLineItemHashMap.values()) {
-            Promotion promotion = promotionProvider.getPromotion(item.productName);//TODO ITEM
+            Promotion promotion = promotionProvider.getPromotion(item);
             if (promotion != null) {
                 ReceiptLineItem promotionLineItem = promotion.applyPromotion(item);
                 receiptLineItemHashMap.put(promotionLineItem.productName,
